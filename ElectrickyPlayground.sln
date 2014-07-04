@@ -5,6 +5,8 @@ VisualStudioVersion = 12.0.30324.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ElectrickyPlayground.LearningDevices", "ElectrickyPlayground.LearningDevices\ElectrickyPlayground.LearningDevices.csproj", "{FDC982FA-5C88-4D68-83E4-D34C68D03092}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ElectrickyPlayground.Models", "ElectrickyPlayground.Models\ElectrickyPlayground.Models.csproj", "{98A04FAA-029E-4910-989E-272FD1B0394B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{FDC982FA-5C88-4D68-83E4-D34C68D03092}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FDC982FA-5C88-4D68-83E4-D34C68D03092}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FDC982FA-5C88-4D68-83E4-D34C68D03092}.Release|Any CPU.Build.0 = Release|Any CPU
+		{98A04FAA-029E-4910-989E-272FD1B0394B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{98A04FAA-029E-4910-989E-272FD1B0394B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{98A04FAA-029E-4910-989E-272FD1B0394B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{98A04FAA-029E-4910-989E-272FD1B0394B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
