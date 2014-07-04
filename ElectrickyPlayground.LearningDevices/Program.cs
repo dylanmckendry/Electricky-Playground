@@ -42,7 +42,6 @@ namespace ElectrickyPlayground.LearningDevices
                 Debug.WriteLine(state);
             };
 
-
             // once the driver is added it takes some time for the device to get ready
             manager.AddDriver(port);
 
@@ -54,7 +53,10 @@ namespace ElectrickyPlayground.LearningDevices
                 Console.WriteLine("Node Name: " + node.Name);
             }
 
+            manager.ResetController(nodes.First().HomeId);
+
             Console.ReadKey();
+
         }
 
         private List<Node> nodes = new List<Node>();
@@ -66,14 +68,35 @@ namespace ElectrickyPlayground.LearningDevices
             switch (notificationType)
             {
                 case ZWNotification.Type.ValueAdded:
-                    Debug.WriteLine("ValueAdded");
-                    break;
+                    {
+                        var value = notification.GetValueID();
+                        Debug.WriteLine("Node {0} Value Added: {1} - {2} - {3}", notification.GetNodeId(), manager.GetValueLabel(value), GetValue(value), manager.GetValueUnits(value));
+                        var node = GetNode(notification.GetHomeId(), notification.GetNodeId());
+                        if (node != null)
+                        {
+                            node.Values.Add(value);
+                        }
+                        break;
+                    }
                 case ZWNotification.Type.ValueRemoved:
-                    Debug.WriteLine("ValueRemoved");
-                    break;
+                    {
+                        var value = notification.GetValueID();
+                        Debug.WriteLine("ValueRemoved");
+                        //Debug.WriteLine("Node {0} Value Removed: {1} - {2} - {3}", notification.GetNodeId(), manager.GetValueLabel(value), GetValue(value), manager.GetValueUnits(value));
+                        var node = GetNode(notification.GetHomeId(), notification.GetNodeId());
+                        if (node != null)
+                        {
+                            node.Values.Remove(value);
+                        }
+                        break;
+                    }
                 case ZWNotification.Type.ValueChanged:
-                    Debug.WriteLine("ValueChanged");
-                    break;
+                    {
+                        var value = notification.GetValueID();
+                        Debug.WriteLine("Node {0} Value Changed: {1} - {2} - {3}", notification.GetNodeId(), manager.GetValueLabel(value), GetValue(value), manager.GetValueUnits(value));
+                        break;
+                    }
+
                 case ZWNotification.Type.ValueRefreshed:
                     Debug.WriteLine("ValueRefreshed");
                     break;
@@ -82,6 +105,7 @@ namespace ElectrickyPlayground.LearningDevices
                     break;
                 case ZWNotification.Type.NodeNew:
                     {
+                        // if the node is not in the z-wave config this will be called first
                         Debug.WriteLine("NodeNew");
                         var node = new Node
                         {
@@ -93,6 +117,7 @@ namespace ElectrickyPlayground.LearningDevices
                     }
                 case ZWNotification.Type.NodeAdded:
                     {
+                        // if the node is in the z-wave config then this will be the first node notification
                         Debug.WriteLine("NodeAdded");
                         if (GetNode(notification.GetHomeId(), notification.GetNodeId()) == null)
                         {
@@ -182,6 +207,55 @@ namespace ElectrickyPlayground.LearningDevices
         private Node GetNode(uint homeId, byte nodeId)
         {
             return nodes.FirstOrDefault(n => n.Id == nodeId && n.HomeId == homeId);
+        }
+
+        string GetValue(ZWValueID value)
+        {
+            switch (value.GetType())
+            {
+                case ZWValueID.ValueType.Bool:
+                    bool boolValue;
+                    manager.GetValueAsBool(value, out boolValue);
+                    return boolValue.ToString();
+                case ZWValueID.ValueType.Byte:
+                    byte byteValue;
+                    manager.GetValueAsByte(value, out byteValue);
+                    return byteValue.ToString();
+                case ZWValueID.ValueType.Decimal:
+                    decimal decimalValue;
+                    manager.GetValueAsDecimal(value, out decimalValue);
+                    return decimalValue.ToString();
+                case ZWValueID.ValueType.Int:
+                    int intValue;
+                    manager.GetValueAsInt(value, out intValue);
+                    return intValue.ToString();
+                case ZWValueID.ValueType.List:
+                    string[] listValues;
+                    manager.GetValueListItems(value, out listValues);
+                    string listValue = "";
+                    if (listValues != null)
+                    {
+                        foreach (string s in listValues)
+                        {
+                            listValue += s;
+                            listValue += "/";
+                        }
+                    }
+                    
+                    return listValue;
+                case ZWValueID.ValueType.Schedule:
+                    return "Schedule";
+                case ZWValueID.ValueType.Short:
+                    short shortValue;
+                    manager.GetValueAsShort(value, out shortValue);
+                    return shortValue.ToString();
+                case ZWValueID.ValueType.String:
+                    string stringValue;
+                    manager.GetValueAsString(value, out stringValue);
+                    return stringValue;
+                default:
+                    return "";
+            }
         }
     }
 }
