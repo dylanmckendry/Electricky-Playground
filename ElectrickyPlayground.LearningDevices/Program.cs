@@ -56,7 +56,6 @@ namespace ElectrickyPlayground.LearningDevices
             manager.ResetController(nodes.First().HomeId);
 
             Console.ReadKey();
-
         }
 
         private List<Node> nodes = new List<Node>();
@@ -81,8 +80,7 @@ namespace ElectrickyPlayground.LearningDevices
                 case ZWNotification.Type.ValueRemoved:
                     {
                         var value = notification.GetValueID();
-                        Debug.WriteLine("ValueRemoved");
-                        //Debug.WriteLine("Node {0} Value Removed: {1} - {2} - {3}", notification.GetNodeId(), manager.GetValueLabel(value), GetValue(value), manager.GetValueUnits(value));
+                        Debug.WriteLine("Node {0} Value Removed", notification.GetNodeId());
                         var node = GetNode(notification.GetHomeId(), notification.GetNodeId());
                         if (node != null)
                         {
@@ -98,7 +96,7 @@ namespace ElectrickyPlayground.LearningDevices
                     }
 
                 case ZWNotification.Type.ValueRefreshed:
-                    Debug.WriteLine("ValueRefreshed");
+                    Debug.WriteLine("Value Refreshed");
                     break;
                 case ZWNotification.Type.Group:
                     Debug.WriteLine("Group");
@@ -106,19 +104,18 @@ namespace ElectrickyPlayground.LearningDevices
                 case ZWNotification.Type.NodeNew:
                     {
                         // if the node is not in the z-wave config this will be called first
-                        Debug.WriteLine("NodeNew");
                         var node = new Node
                         {
                             Id = notification.GetNodeId(),
                             HomeId = notification.GetHomeId()
                         };
+                        Debug.WriteLine("Node New: {0}, Home: {1}", node.Id, node.HomeId);
                         nodes.Add(node);
                         break;
                     }
                 case ZWNotification.Type.NodeAdded:
                     {
                         // if the node is in the z-wave config then this will be the first node notification
-                        Debug.WriteLine("NodeAdded");
                         if (GetNode(notification.GetHomeId(), notification.GetNodeId()) == null)
                         {
                             var node = new Node
@@ -126,6 +123,7 @@ namespace ElectrickyPlayground.LearningDevices
                                 Id = notification.GetNodeId(),
                                 HomeId = notification.GetHomeId()
                             };
+                            Debug.WriteLine("Node Added: {0}, Home: {1}", node.Id, node.HomeId);
                             nodes.Add(node);
                         }
                         break;
@@ -139,64 +137,65 @@ namespace ElectrickyPlayground.LearningDevices
                     break;
                 case ZWNotification.Type.NodeNaming:
                     {
-                        Debug.WriteLine("NodeNaming");
                         var node = GetNode(notification.GetHomeId(), notification.GetNodeId());
                         if (node != null)
                         {
+                            node.Name = manager.GetNodeName(node.HomeId, node.Id);
                             node.Manufacturer = manager.GetNodeManufacturerName(node.HomeId, node.Id);
                             node.Product = manager.GetNodeProductName(node.HomeId, node.Id);
                             node.Location = manager.GetNodeLocation(node.HomeId, node.Id);
-                            node.Name = manager.GetNodeName(node.HomeId, node.Id);
+
+                            Debug.WriteLine("Name: {0}, Manufacturer: {1}, Product: {2}, Location: {3}", node.Name, node.Manufacturer, node.Product, node.Location);
                         }
                         break;
                     }
                 case ZWNotification.Type.NodeEvent:
-                    Debug.WriteLine("NodeEvent");
+                    Debug.WriteLine("Node Event");
                     break;
                 case ZWNotification.Type.PollingDisabled:
-                    Debug.WriteLine("PollingDisabled");
+                    Debug.WriteLine("Polling Disabled");
                     break;
                 case ZWNotification.Type.PollingEnabled:
-                    Debug.WriteLine("PollingEnabled");
+                    Debug.WriteLine("Polling Enabled");
                     break;
                 case ZWNotification.Type.SceneEvent:
-                    Debug.WriteLine("SceneEvent");
+                    Debug.WriteLine("Scene Event");
                     break;
                 case ZWNotification.Type.CreateButton:
-                    Debug.WriteLine("CreateButton");
+                    Debug.WriteLine("Create Button");
                     break;
                 case ZWNotification.Type.DeleteButton:
-                    Debug.WriteLine("DeleteButton");
+                    Debug.WriteLine("Delete Button");
                     break;
                 case ZWNotification.Type.ButtonOn:
-                    Debug.WriteLine("ButtonOn");
+                    Debug.WriteLine("Button On");
                     break;
                 case ZWNotification.Type.ButtonOff:
-                    Debug.WriteLine("ButtonOff");
+                    Debug.WriteLine("Button Off");
                     break;
                 case ZWNotification.Type.DriverReady:
-                    Debug.WriteLine("DriverReady");
+                    Debug.WriteLine("Driver Ready");
                     break;
                 case ZWNotification.Type.DriverFailed:
-                    Debug.WriteLine("DriverFailed");
+                    Debug.WriteLine("Driver Failed");
                     break;
                 case ZWNotification.Type.DriverReset:
-                    Debug.WriteLine("DriverReset");
+                    Debug.WriteLine("Driver Reset");
                     break;
                 case ZWNotification.Type.EssentialNodeQueriesComplete:
-                    Debug.WriteLine("EssentialNodeQueriesComplete");
+                    Debug.WriteLine("Essential Node Queries Complete");
                     break;
                 case ZWNotification.Type.NodeQueriesComplete:
-                    Debug.WriteLine("NodeQueriesComplete");
+                    Debug.WriteLine("Node Queries Complete");
                     break;
                 case ZWNotification.Type.AwakeNodesQueried:
-                    Debug.WriteLine("AwakeNodesQueried");
+                    Debug.WriteLine("Awake Nodes Queried");
                     break;
                 case ZWNotification.Type.AllNodesQueried:
-                    Debug.WriteLine("AllNodesQueried");
+                    Debug.WriteLine("All Nodes Queried");
                     break;
                 case ZWNotification.Type.AllNodesQueriedSomeDead:
-                    Debug.WriteLine("AllNodesQueriedSomeDead");
+                    Debug.WriteLine("All Nodes Queried Some Dead");
                     break;
                 case ZWNotification.Type.Notification:
                     Debug.WriteLine("Notification");
@@ -241,7 +240,6 @@ namespace ElectrickyPlayground.LearningDevices
                             listValue += "/";
                         }
                     }
-                    
                     return listValue;
                 case ZWValueID.ValueType.Schedule:
                     return "Schedule";
